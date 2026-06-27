@@ -23,8 +23,12 @@ struct ProfileView: View {
 
             Spacer()
 
-            settingsRow
-                .padding(.bottom, 96)
+            if Features.settings {
+                settingsRow
+                    .padding(.bottom, 96)
+            } else {
+                Spacer().frame(height: 96)
+            }
         }
         .padding(.horizontal, DSMetrics.screenPadding)
     }

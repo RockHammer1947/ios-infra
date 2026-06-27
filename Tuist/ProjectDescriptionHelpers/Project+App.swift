@@ -33,9 +33,13 @@ public extension Project {
                         "CFBundleVersion": "$(CURRENT_PROJECT_VERSION)",
                         "UILaunchScreen": [:],
                         "CFBundleDevelopmentRegion": "zh-Hans",
+                        // App uses only standard HTTPS — declare exempt so uploads
+                        // skip the manual export-compliance question.
+                        "ITSAppUsesNonExemptEncryption": false,
                     ]),
                     sources: ["Sources/**"],
                     resources: ["Resources/**"],
+                    settings: .settings(base: ["ASSETCATALOG_COMPILER_APPICON_NAME": "AppIcon"]),
                     dependencies: dependencies
                 ),
                 .target(

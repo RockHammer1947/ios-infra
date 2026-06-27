@@ -30,7 +30,7 @@ struct TodayView: View {
                             chapterBlock(daily)
                         }
                         .buttonStyle(.plain)
-                        listenRow(daily)
+                        if Features.audio { listenRow(daily) }
                     }
                     Spacer(minLength: 24)
                     NavigationLink(value: 1) { continueCard }
