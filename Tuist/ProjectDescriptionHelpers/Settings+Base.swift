@@ -32,6 +32,11 @@ public extension Settings {
                 "ENABLE_USER_SCRIPT_SANDBOXING": "YES",
                 "SWIFT_STRICT_CONCURRENCY": "complete",
                 "DEVELOPMENT_TEAM": "$(DEVELOPMENT_TEAM)",
+                // Xcode 16's explicitly-built modules can start compiling a
+                // consumer before a dependency framework's .swiftmodule is
+                // ready ("no such module"). Fall back to implicit modules,
+                // which the build system orders correctly.
+                "SWIFT_ENABLE_EXPLICIT_MODULES": "NO",
             ],
             configurations: [
                 .debug(name: "Debug"),
