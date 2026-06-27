@@ -12,7 +12,8 @@ public struct DSSegmentedControl<Value: Hashable>: View {
 
     public var body: some View {
         HStack(spacing: 4) {
-            ForEach(options, id: \.value) { option in
+            ForEach(options.indices, id: \.self) { index in
+                let option = options[index]
                 let isOn = option.value == selection
                 Text(option.label)
                     .font(DSFont.sans(13, weight: isOn ? .medium : .regular))

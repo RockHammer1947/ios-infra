@@ -1,15 +1,14 @@
-import AppCore
-import DesignSystem
+import ReaderFeature
 import SwiftUI
 
 @main
 struct DaodejingReaderApp: App {
     var body: some Scene {
         WindowGroup {
-            RootView()
+            ReaderRoot()
         }
         #if os(macOS)
-        .defaultSize(width: 800, height: 600)
+        .defaultSize(width: 420, height: 820)
         #endif
     }
 }

@@ -11,6 +11,7 @@ public extension Project {
     static func app(
         name: String,
         bundleIdSuffix: String,
+        displayName: String? = nil,
         dependencies: [TargetDependency] = []
     ) -> Project {
         let bundleId = "\(Constants.organizationIdentifier).\(bundleIdSuffix)"
@@ -27,7 +28,7 @@ public extension Project {
                     bundleId: bundleId,
                     deploymentTargets: Constants.deploymentTargets,
                     infoPlist: .extendingDefault(with: [
-                        "CFBundleDisplayName": "$(PRODUCT_NAME)",
+                        "CFBundleDisplayName": .string(displayName ?? "$(PRODUCT_NAME)"),
                         "CFBundleShortVersionString": "$(MARKETING_VERSION)",
                         "CFBundleVersion": "$(CURRENT_PROJECT_VERSION)",
                         "UILaunchScreen": [:],

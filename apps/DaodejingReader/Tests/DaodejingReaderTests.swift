@@ -1,11 +1,11 @@
 import Testing
 @testable import DaodejingReader
 
-@Suite("DaodejingReader smoke tests")
+@Suite("DaodejingReader app")
 struct DaodejingReaderTests {
-    @Test("Root view is constructible")
-    func rootViewConstructs() {
-        _ = RootView()
+    @Test("App type is available")
+    func appExists() {
+        _ = DaodejingReaderApp.self
         #expect(Bool(true))
     }
 }

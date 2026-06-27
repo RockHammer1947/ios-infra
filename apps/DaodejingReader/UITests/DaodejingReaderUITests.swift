@@ -7,12 +7,14 @@ final class DaodejingReaderUITests: XCTestCase {
         continueAfterFailure = false
     }
 
-    func testRootViewAppearsOnLaunch() {
+    func testRootAndTabsAppearOnLaunch() {
         let app = XCUIApplication()
         app.launch()
+        // The tab shell renders the four primary destinations.
         XCTAssertTrue(
-            app.staticTexts["道可道，非常道"].waitForExistence(timeout: 10),
-            "Placeholder root view should be visible after launch"
+            app.staticTexts["今日"].waitForExistence(timeout: 10),
+            "今日 tab should be visible after launch"
         )
+        XCTAssertTrue(app.staticTexts["经文"].exists)
     }
 }
