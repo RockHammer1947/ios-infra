@@ -1,0 +1,10 @@
+@testable import {{ name }}
+import Testing
+
+@Suite("{{ name }}")
+struct {{ name }}Tests {
+    @Test("Identifier is set")
+    func identifierIsSet() {
+        #expect({{ name }}.identifier == "{{ name }}")
+    }
+}

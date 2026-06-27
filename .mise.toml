@@ -1,0 +1,11 @@
+# Pinned toolchain — keeps local dev and CI byte-for-byte identical.
+# Bump these deliberately; CI installs exactly these via `jdx/mise-action`.
+# (Ruby/fastlane is pinned separately via Gemfile + Bundler.)
+[tools]
+tuist = "4.40.0"
+swiftlint = "0.55.1"
+swiftformat = "0.54.0"
+
+[settings]
+# Fail loudly instead of silently using a different installed version.
+idiomatic_version_file_enable_tools = []

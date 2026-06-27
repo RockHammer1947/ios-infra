@@ -1,0 +1,6 @@
+# Test (scan) defaults used by the `test` lane.
+workspace("iOSInfra.xcworkspace")
+scheme(ENV["APP_SCHEME"] || "DaodejingReader")
+code_coverage(true)
+result_bundle(true)
+output_directory("fastlane/test_output")

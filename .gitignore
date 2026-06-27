@@ -1,0 +1,49 @@
+## macOS / Xcode
+.DS_Store
+*.xcuserstate
+xcuserdata/
+*.xcscmblueprint
+*.xccheckout
+DerivedData/
+build/
+*.moved-aside
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+## Tuist — generated artifacts are never committed; regenerate with `tuist generate`
+*.xcodeproj
+*.xcworkspace
+!default.xcworkspace
+.tuist-derived/
+Derived/
+graph.png
+.build/
+
+## Swift Package Manager
+.swiftpm/
+Package.resolved
+
+## fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+fastlane/test_output/
+fastlane/*.mobileprovision
+*.p8
+*.p12
+*.cer
+*.certSigningRequest
+
+## Secrets / local env
+fastlane/.env
+fastlane/.env.*
+!fastlane/.env.example
+.env
+
+## Ruby
+vendor/bundle/
+
+## Tooling
+.mise/

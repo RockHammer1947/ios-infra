@@ -1,0 +1,11 @@
+@testable import {{ name }}
+import Testing
+
+@Suite("{{ name }} smoke tests")
+struct {{ name }}Tests {
+    @Test("Root view is constructible")
+    func rootViewConstructs() {
+        _ = RootView()
+        #expect(Bool(true))
+    }
+}

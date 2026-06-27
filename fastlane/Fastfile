@@ -1,0 +1,102 @@
+default_platform(:ios)
+
+# Which app to act on. Every lane is app-agnostic — drive it with APP_SCHEME so
+# the same Fastfile serves every app in the monorepo.
+APP_SCHEME = ENV["APP_SCHEME"] || "DaodejingReader"
+WORKSPACE  = "iOSInfra.xcworkspace"
+
+platform :ios do
+  # --- Quality gates ---------------------------------------------------------
+
+  desc "Lint Swift sources (SwiftLint strict + SwiftFormat lint mode)"
+  lane :lint do
+    Dir.chdir("..") do
+      sh("mise", "exec", "--", "swiftlint", "lint", "--strict")
+      sh("mise", "exec", "--", "swiftformat", "--lint", ".")
+    end
+  end
+
+  desc "Generate the project and run unit + UI tests on a simulator (no signing)"
+  lane :test do
+    generate_project
+    run_tests(
+      workspace: WORKSPACE,
+      scheme: APP_SCHEME,
+      destination: "platform=iOS Simulator,name=iPhone 15",
+      code_coverage: true,
+      result_bundle: true,
+      output_directory: "fastlane/test_output"
+    )
+  end
+
+  # --- Distribution ----------------------------------------------------------
+
+  desc "Build and upload a build to TestFlight"
+  lane :beta do
+    api_key = load_api_key
+    setup_signing(api_key: api_key)
+    build_archive(api_key: api_key)
+    upload_to_testflight(
+      api_key: api_key,
+      skip_waiting_for_build_processing: true,
+      distribute_external: false
+    )
+  end
+
+  desc "Build and submit a release to App Store review"
+  lane :release do
+    api_key = load_api_key
+    setup_signing(api_key: api_key)
+    build_archive(api_key: api_key)
+    upload_to_app_store(
+      api_key: api_key,
+      force: true,                       # skip interactive HTML preview
+      precheck_include_in_app_purchases: false,
+      submit_for_review: true,
+      automatic_release: false,
+      skip_screenshots: false,
+      skip_metadata: false,
+      run_precheck_before_submit: false
+    )
+  end
+
+  # --- Private helpers -------------------------------------------------------
+
+  desc "Install deps, then generate the Xcode workspace with Tuist"
+  private_lane :generate_project do
+    Dir.chdir("..") do
+      sh("mise", "exec", "--", "tuist", "install")
+      sh("mise", "exec", "--", "tuist", "generate", "--no-open")
+    end
+  end
+
+  # Loads an App Store Connect API key from base64 env content (no 2FA in CI).
+  private_lane :load_api_key do
+    app_store_connect_api_key(
+      key_id: ENV["APP_STORE_CONNECT_API_KEY_ID"],
+      issuer_id: ENV["APP_STORE_CONNECT_API_ISSUER_ID"],
+      key_content: ENV["APP_STORE_CONNECT_API_KEY"],
+      is_key_content_base64: true,
+      in_house: false
+    )
+  end
+
+  # Prepares an ephemeral CI keychain and syncs signing assets via match.
+  private_lane :setup_signing do |options|
+    setup_ci(force: true) if ENV["CI"]
+    match(type: "appstore", api_key: options[:api_key], readonly: true)
+  end
+
+  # Regenerates the project then archives it. Build number is injected from CI.
+  private_lane :build_archive do |options|
+    generate_project
+    build_number = ENV["BUILD_NUMBER"] ||
+                   (latest_testflight_build_number(api_key: options[:api_key]).to_i + 1).to_s
+    build_app(
+      workspace: WORKSPACE,
+      scheme: APP_SCHEME,
+      export_method: "app-store",
+      xcargs: "CURRENT_PROJECT_VERSION=#{build_number}"
+    )
+  end
+end

@@ -1,0 +1,58 @@
+name: Reusable iOS CI
+
+# Build + lint + test for a single app. Every app's CI is a thin caller of this
+# workflow — pass the scheme and you're done. No secrets required (simulator,
+# unsigned), so it proves the pipeline is green on every PR.
+on:
+  workflow_call:
+    inputs:
+      scheme:
+        description: "Xcode scheme to build and test"
+        required: true
+        type: string
+      runner:
+        description: "macOS runner image"
+        required: false
+        type: string
+        default: "macos-14"
+      xcode-version:
+        description: "Xcode version to select"
+        required: false
+        type: string
+        default: "16.1"
+
+jobs:
+  build-test:
+    runs-on: ${{ inputs.runner }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select Xcode ${{ inputs.xcode-version }}
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: ${{ inputs.xcode-version }}
+
+      - name: Install pinned tools (Tuist, SwiftLint, SwiftFormat)
+        uses: jdx/mise-action@v2
+
+      - name: Set up Ruby + bundler cache
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+          bundler-cache: true
+
+      - name: Lint
+        run: bundle exec fastlane ios lint
+
+      - name: Build & Test
+        env:
+          APP_SCHEME: ${{ inputs.scheme }}
+        run: bundle exec fastlane ios test
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-output-${{ inputs.scheme }}
+          path: fastlane/test_output
+          if-no-files-found: ignore

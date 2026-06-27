@@ -1,0 +1,7 @@
+# App Store Connect / Developer Portal identity.
+# All values come from environment variables so the same Appfile serves every
+# app in the monorepo and never hardcodes secrets. See fastlane/.env.example.
+app_identifier(ENV["APP_IDENTIFIER"] || "com.example.daodejing")
+apple_id(ENV["APPLE_ID"])
+team_id(ENV["TEAM_ID"])
+itc_team_id(ENV["ITC_TEAM_ID"]) if ENV["ITC_TEAM_ID"]

@@ -1,0 +1,5 @@
+# Build (gym) defaults shared by beta/release lanes.
+workspace("iOSInfra.xcworkspace")
+scheme(ENV["APP_SCHEME"] || "DaodejingReader")
+clean(true)
+export_method("app-store")

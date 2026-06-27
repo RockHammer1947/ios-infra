@@ -1,0 +1,20 @@
+name: Beta (TestFlight)
+
+on:
+  push:
+    tags: ["*-beta"]          # e.g. v1.2.0-beta
+  workflow_dispatch:
+    inputs:
+      scheme:
+        description: "Scheme to ship to TestFlight"
+        required: true
+        default: "DaodejingReader"
+        type: string
+
+jobs:
+  testflight:
+    uses: ./.github/workflows/reusable-ios-release.yml
+    with:
+      scheme: ${{ github.event.inputs.scheme || 'DaodejingReader' }}
+      lane: beta
+    secrets: inherit

@@ -1,0 +1,20 @@
+name: Release (App Store)
+
+on:
+  push:
+    tags: ["v[0-9]+.[0-9]+.[0-9]+"]   # e.g. v1.2.0 (excludes *-beta)
+  workflow_dispatch:
+    inputs:
+      scheme:
+        description: "Scheme to submit to the App Store"
+        required: true
+        default: "DaodejingReader"
+        type: string
+
+jobs:
+  app-store:
+    uses: ./.github/workflows/reusable-ios-release.yml
+    with:
+      scheme: ${{ github.event.inputs.scheme || 'DaodejingReader' }}
+      lane: release
+    secrets: inherit

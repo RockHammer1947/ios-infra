@@ -1,0 +1,24 @@
+name: CI
+
+on:
+  push:
+    branches: [main, "claude/**"]
+  pull_request:
+    branches: [main]
+
+# Cancel superseded runs on the same ref to save macOS minutes.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  daodejing-reader:
+    name: DaodejingReader
+    uses: ./.github/workflows/reusable-ios-ci.yml
+    with:
+      scheme: DaodejingReader
+    # ── To add a new app, copy this job and change the scheme: ──
+    # my-new-app:
+    #   uses: ./.github/workflows/reusable-ios-ci.yml
+    #   with:
+    #     scheme: MyNewApp

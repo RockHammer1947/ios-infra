@@ -1,0 +1,5 @@
+import Foundation
+
+public enum {{ name }} {
+    public static let identifier = "{{ name }}"
+}

@@ -1,0 +1,4 @@
+Placeholder description. Replace before submitting to the App Store.
+
+This app is currently an infrastructure scaffold used to validate the build,
+test, signing and release pipeline end to end.

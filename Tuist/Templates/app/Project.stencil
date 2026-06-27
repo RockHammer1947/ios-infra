@@ -1,0 +1,11 @@
+import ProjectDescription
+import ProjectDescriptionHelpers
+
+let project = Project.app(
+    name: "{{ name }}",
+    bundleIdSuffix: "{{ name|lowercase }}",
+    dependencies: [
+        .project(target: "AppCore", path: "../../Modules/AppCore"),
+        .project(target: "DesignSystem", path: "../../Modules/DesignSystem"),
+    ]
+)

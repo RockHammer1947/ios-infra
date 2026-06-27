@@ -1,0 +1,35 @@
+# Shared lint rules for every app and module in the monorepo.
+included:
+  - apps
+  - Modules
+excluded:
+  - "**/Derived"
+  - "**/.build"
+  - Tuist/ProjectDescriptionHelpers
+  - Tuist/Templates
+
+opt_in_rules:
+  - empty_count
+  - force_unwrapping
+  - explicit_init
+  - closure_spacing
+  - redundant_nil_coalescing
+  - operator_usage_whitespace
+
+line_length:
+  warning: 140
+  error: 200
+  ignores_comments: true
+
+type_body_length:
+  warning: 350
+  error: 500
+
+identifier_name:
+  min_length: 2
+  excluded:
+    - id
+    - x
+    - y
+
+reporter: "xcode"
