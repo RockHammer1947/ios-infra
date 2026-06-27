@@ -1,11 +1,13 @@
 import DaodejingContent
 import DesignSystem
+import Purchases
 import SwiftUI
 
-/// Top-level entry point the app embeds. Owns the content repository and the
-/// persisted appearance, and hosts the tab shell.
+/// Top-level entry point the app embeds. Owns the content repository, the
+/// in-app-purchase store, and the persisted appearance, and hosts the tab shell.
 public struct ReaderRoot: View {
     @AppStorage("theme") private var themeRaw = DSTheme.dark.rawValue
+    @State private var store = StoreModel(productIDs: ReaderProducts.all)
 
     private let repository: any ContentRepository
 
@@ -17,8 +19,10 @@ public struct ReaderRoot: View {
 
     public var body: some View {
         RootTabView(repository: repository)
+            .environment(store)
             .tint(DSColor.accent)
             .dsTheme(theme)
+            .task { await store.loadProducts() }
     }
 }
 

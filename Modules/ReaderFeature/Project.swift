@@ -7,5 +7,6 @@ let project = Project.module(
     dependencies: [
         .project(target: "DesignSystem", path: "../DesignSystem"),
         .project(target: "DaodejingContent", path: "../DaodejingContent"),
+        .project(target: "Purchases", path: "../Purchases"),
     ]
 )

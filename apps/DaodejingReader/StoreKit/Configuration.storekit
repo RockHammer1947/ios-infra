@@ -1,0 +1,33 @@
+{
+  "identifier" : "A1B2C3D4-0000-0000-0000-000000000001",
+  "nonRenewingSubscriptions" : [],
+  "products" : [
+    {
+      "displayPrice" : "6.00",
+      "familyShareable" : false,
+      "internalID" : "A1B2C3D4-0000-0000-0000-000000000010",
+      "localizations" : [
+        {
+          "description" : "解锁全部 81 章，永久离线阅读",
+          "displayName" : "常道 · 完整版",
+          "locale" : "zh_CN"
+        },
+        {
+          "description" : "Unlock all 81 chapters, forever, offline.",
+          "displayName" : "Chang Dao · Full Access",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.example.daodejing.fullaccess",
+      "referenceName" : "Full Access",
+      "type" : "NonConsumable"
+    }
+  ],
+  "settings" : {
+  },
+  "subscriptionGroups" : [],
+  "version" : {
+    "major" : 3,
+    "minor" : 0
+  }
+}

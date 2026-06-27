@@ -1,5 +1,6 @@
 import DaodejingContent
 import DesignSystem
+import Purchases
 import SwiftUI
 
 /// How the 原文 returns alongside the 白话 — the three patterns from the design.
@@ -29,6 +30,7 @@ struct ReaderView: View {
     @State private var bookmarked = false
     @AppStorage("fontScale") private var fontScale = 1.0
     @Environment(\.dismiss) private var dismiss
+    @Environment(StoreModel.self) private var store
 
     init(repository: any ContentRepository, startNumber: Int) {
         self.repository = repository
@@ -38,13 +40,14 @@ struct ReaderView: View {
     private var numbers: [Int] { repository.allChapters().map(\.number).sorted() }
     private var chapter: Chapter? { repository.chapter(currentNumber) }
     private var bodySize: CGFloat { CGFloat(16.5 * fontScale) }
+    private var isLocked: Bool { ReaderProducts.access.isLocked(currentNumber, unlocked: store.isUnlocked) }
 
     var body: some View {
         ZStack {
             DSColor.background.ignoresSafeArea()
             VStack(spacing: 0) {
                 navBar
-                modeSwitcher
+                if !isLocked { modeSwitcher }
                 ScrollView {
                     if let chapter {
                         content(chapter)
@@ -126,10 +129,34 @@ struct ReaderView: View {
             .padding(.top, 12)
             .padding(.bottom, 8)
 
-        switch mode {
-        case .vernacular: vernacularBody(chapter)
-        case .sentence: sentenceBody(chapter)
-        case .annotated: annotatedBody(chapter)
+        if isLocked {
+            lockedBody(chapter)
+        } else {
+            switch mode {
+            case .vernacular: vernacularBody(chapter)
+            case .sentence: sentenceBody(chapter)
+            case .annotated: annotatedBody(chapter)
+            }
+        }
+    }
+
+    /// Free teaser (first 白话 paragraph) above the paywall.
+    private func lockedBody(_ chapter: Chapter) -> some View {
+        VStack(alignment: .leading, spacing: 20) {
+            if let teaser = chapter.vernacular.first {
+                Text(teaser)
+                    .font(DSFont.sans(bodySize)).lineSpacing(9)
+                    .foregroundStyle(DSColor.textBody)
+                    .mask(
+                        LinearGradient(
+                            colors: [.black, .black, .clear],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    )
+            }
+            PaywallCard()
+                .padding(.top, 4)
         }
     }
 

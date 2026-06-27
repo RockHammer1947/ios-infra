@@ -85,6 +85,41 @@ A successful run uploads a build to TestFlight. For App Store review, push a
 `vX.Y.Z` tag (runs the `release` lane → `deliver` with the metadata in
 `fastlane/metadata/`).
 
+## 8. In-app purchase (解锁全本) + pricing
+
+常道 is free to download with a free preview (chapters 1–3); a single
+non-consumable unlocks all 81 chapters. Code lives in the reusable `Purchases`
+module (StoreKit 2) and `ReaderFeature` (paywall + gating).
+
+### Create the product in App Store Connect
+
+1. **App Store Connect → your app → In-App Purchases → +** → **Non-Consumable**.
+2. **Product ID:** `com.example.daodejing.fullaccess` (must match
+   `ReaderProducts.fullAccess`; change the org prefix to your own).
+3. Reference name: `Full Access`; add localizations (zh-Hans「常道 · 完整版」,
+   en「Chang Dao · Full Access」).
+
+### Pricing — $6 international, ¥6 China
+
+1. Set the **base price** to the **$5.99 / US$6 price point** (this fills in
+   localized prices for every storefront automatically).
+2. The auto-filled China price will be ~¥40; override it. In the price
+   schedule, choose **Edit prices per territory → China mainland (CNY)** and set
+   the custom price to the **¥6 price point**. App Store Connect keeps the rest
+   of the world at the $6-derived prices.
+3. The app shows whatever StoreKit returns for the buyer's storefront
+   (`product.displayPrice`) — no hardcoded prices.
+
+### Testing the flow
+
+- **Local / CI (no account):** open `apps/DaodejingReader/StoreKit/Configuration.storekit`
+  in Xcode, then **Edit Scheme → Run → Options → StoreKit Configuration →
+  Configuration.storekit**. Run the app, open a gated chapter (e.g. 第八章
+  上善若水) → the paywall purchases instantly in test mode.
+- **Device sandbox:** create a Sandbox tester in App Store Connect (Users and
+  Access → Sandbox), sign in on the device, and buy against the real product.
+- Gating logic (`AccessPolicy`) is unit-tested in `PurchasesTests`.
+
 ## Troubleshooting
 
 - **`No profiles for '...' were found`** — bundle id mismatch, or run

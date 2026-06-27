@@ -38,12 +38,19 @@ final class ScreenshotTests: XCTestCase {
         capture(app, "06-reader-annotated")
 
         tap(app.buttons["reader-back"])
+
+        // A gated chapter shows the paywall (free preview is 1–3).
+        tap(app.staticTexts["上善若水"])
+        _ = app.staticTexts["解锁全本"].waitForExistence(timeout: 5)
+        capture(app, "07-paywall")
+        tap(app.buttons["reader-back"])
+
         tap(app.staticTexts["笔记"])
         _ = app.staticTexts["还没有笔记"].waitForExistence(timeout: 5)
-        capture(app, "07-notes")
+        capture(app, "08-notes")
 
         tap(app.staticTexts["我的"])
-        capture(app, "08-profile")
+        capture(app, "09-profile")
     }
 
     private func tap(_ element: XCUIElement) {

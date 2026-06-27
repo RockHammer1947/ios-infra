@@ -1,10 +1,12 @@
 import DaodejingContent
 import DesignSystem
+import Purchases
 import SwiftUI
 
 /// 经文 — the table of contents, split into 道经 / 德经 with search.
 struct ContentsView: View {
     let repository: any ContentRepository
+    @Environment(StoreModel.self) private var store
     @State private var book: Book = .dao
     @State private var query = ""
 
@@ -38,7 +40,10 @@ struct ContentsView: View {
                 LazyVStack(spacing: 0) {
                     ForEach(listed) { chapter in
                         NavigationLink(value: chapter.number) {
-                            ChapterRow(chapter: chapter)
+                            ChapterRow(
+                                chapter: chapter,
+                                locked: ReaderProducts.access.isLocked(chapter.number, unlocked: store.isUnlocked)
+                            )
                         }
                         .buttonStyle(.plain)
                         Rectangle().fill(DSColor.separator).frame(height: 1)
@@ -55,6 +60,7 @@ struct ContentsView: View {
 /// One row in the contents list: numeral · title · 原文 teaser · read dot.
 private struct ChapterRow: View {
     let chapter: Chapter
+    let locked: Bool
 
     var body: some View {
         HStack(spacing: 14) {
@@ -70,7 +76,11 @@ private struct ChapterRow: View {
                     .lineLimit(1)
             }
             Spacer()
-            Circle().strokeBorder(DSColor.border, lineWidth: 1).frame(width: 7, height: 7)
+            if locked {
+                Image(systemName: "lock.fill").font(.system(size: 10)).foregroundStyle(DSColor.textFaint)
+            } else {
+                Circle().strokeBorder(DSColor.border, lineWidth: 1).frame(width: 7, height: 7)
+            }
         }
         .padding(.vertical, 13)
         .contentShape(Rectangle())
