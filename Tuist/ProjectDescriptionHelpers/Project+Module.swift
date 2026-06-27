@@ -2,15 +2,16 @@ import ProjectDescription
 
 public extension Project {
     /// Factory for a shared, reusable feature/core module with its own test
-    /// target and scheme. Modules are static frameworks by default to avoid
-    /// dynamic-linking overhead while staying multiplatform.
+    /// target and scheme. Modules are dynamic frameworks: Tuist auto-embeds them
+    /// in the consuming app and sets module search paths, which avoids the
+    /// static-framework "no such module" race under Xcode's explicit modules.
     ///
     /// ```swift
     /// let project = Project.module(name: "AppCore")
     /// ```
     static func module(
         name: String,
-        product: Product = .staticFramework,
+        product: Product = .framework,
         dependencies: [TargetDependency] = []
     ) -> Project {
         let bundleId = "\(Constants.organizationIdentifier).\(name.lowercased())"
