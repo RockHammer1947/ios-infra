@@ -30,22 +30,29 @@ enum ReaderTab: String, CaseIterable, Identifiable {
 struct RootTabView: View {
     let repository: any ContentRepository
     @State private var tab: ReaderTab = .today
+    @State private var path: [Int] = []
 
     var body: some View {
-        ZStack(alignment: .bottom) {
-            DSColor.background.ignoresSafeArea()
+        NavigationStack(path: $path) {
+            ZStack(alignment: .bottom) {
+                DSColor.background.ignoresSafeArea()
 
-            Group {
-                switch tab {
-                case .today: TodayView(repository: repository)
-                case .contents: ContentsView(repository: repository)
-                case .notes: NotesView()
-                case .profile: ProfileView(repository: repository)
+                Group {
+                    switch tab {
+                    case .today: TodayView(repository: repository)
+                    case .contents: ContentsView(repository: repository)
+                    case .notes: NotesView()
+                    case .profile: ProfileView(repository: repository)
+                    }
                 }
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-            tabBar
+                tabBar
+            }
+            .toolbar(.hidden, for: .navigationBar)
+            .navigationDestination(for: Int.self) { number in
+                ReaderView(repository: repository, startNumber: number)
+            }
         }
         .accessibilityIdentifier("reader-root")
     }

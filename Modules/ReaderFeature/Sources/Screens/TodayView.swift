@@ -26,11 +26,15 @@ struct TodayView: View {
                 VStack(alignment: .leading, spacing: 0) {
                     header
                     if let daily {
-                        chapterBlock(daily)
+                        NavigationLink(value: daily.number) {
+                            chapterBlock(daily)
+                        }
+                        .buttonStyle(.plain)
                         listenRow(daily)
                     }
                     Spacer(minLength: 24)
-                    continueCard
+                    NavigationLink(value: 1) { continueCard }
+                        .buttonStyle(.plain)
                 }
                 .padding(.horizontal, DSMetrics.screenPadding)
                 .padding(.top, 8)

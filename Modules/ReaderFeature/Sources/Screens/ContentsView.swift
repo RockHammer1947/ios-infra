@@ -37,7 +37,10 @@ struct ContentsView: View {
             ScrollView {
                 LazyVStack(spacing: 0) {
                     ForEach(listed) { chapter in
-                        ChapterRow(chapter: chapter)
+                        NavigationLink(value: chapter.number) {
+                            ChapterRow(chapter: chapter)
+                        }
+                        .buttonStyle(.plain)
                         Rectangle().fill(DSColor.separator).frame(height: 1)
                     }
                 }
