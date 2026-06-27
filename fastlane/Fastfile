@@ -1,5 +1,10 @@
 default_platform(:ios)
 
+# `xcodebuild -showBuildSettings` is slow on a cold CI runner; the fastlane
+# default (3s base, 4 retries) times out before it answers. Give it room.
+ENV["FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT"] ||= "180"
+ENV["FASTLANE_XCODEBUILD_SETTINGS_RETRIES"] ||= "6"
+
 # Which app to act on. Every lane is app-agnostic — drive it with APP_SCHEME so
 # the same Fastfile serves every app in the monorepo.
 APP_SCHEME = ENV["APP_SCHEME"] || "DaodejingReader"
