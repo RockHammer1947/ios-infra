@@ -29,6 +29,11 @@ final class ScreenshotTests: XCTestCase {
         let paragraph = app.staticTexts.containing(
             NSPredicate(format: "label CONTAINS %@", "可以言说的")
         ).firstMatch
+        // M7: long-press saves a 划线 into 笔记, and bookmark the chapter.
+        if paragraph.waitForExistence(timeout: 6) { paragraph.press(forDuration: 0.9) }
+        Thread.sleep(forTimeInterval: 0.6)
+        tap(app.buttons["reader-bookmark"])
+
         tap(paragraph)
         capture(app, "04-reader-reveal")
 
@@ -47,7 +52,8 @@ final class ScreenshotTests: XCTestCase {
         tap(app.buttons["reader-back"])
 
         tap(app.staticTexts["笔记"])
-        _ = app.staticTexts["还没有笔记"].waitForExistence(timeout: 5)
+        // Populated now that we highlighted and bookmarked chapter 1 (M7).
+        _ = app.staticTexts["划线"].waitForExistence(timeout: 5)
         capture(app, "08-notes")
 
         tap(app.staticTexts["我的"])
