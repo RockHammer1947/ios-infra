@@ -1,6 +1,8 @@
 import DaodejingContent
 import DesignSystem
+import Library
 import Purchases
+import SwiftData
 import SwiftUI
 
 /// How the 原文 returns alongside the 白话 — the three patterns from the design.
@@ -28,9 +30,13 @@ struct ReaderView: View {
     @State private var mode: ReadMode = .vernacular
     @State private var revealed: Set<Int> = []
     @State private var bookmarked = false
+    @State private var savedToast = false
     @AppStorage("fontScale") private var fontScale = 1.0
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var modelContext
     @Environment(StoreModel.self) private var store
+
+    private var library: LibraryStore { LibraryStore(modelContext) }
 
     init(repository: any ContentRepository, startNumber: Int) {
         self.repository = repository
@@ -58,8 +64,25 @@ struct ReaderView: View {
                 }
                 footer
             }
+            .overlay(alignment: .bottom) { savedBanner }
         }
         .toolbar(.hidden, for: .navigationBar)
+        .onAppear { enterChapter() }
+        .onChange(of: currentNumber) { _, _ in enterChapter() }
+    }
+
+    @ViewBuilder
+    private var savedBanner: some View {
+        if savedToast {
+            Text("已存入笔记")
+                .font(DSFont.sans(12.5, weight: .medium))
+                .foregroundStyle(DSColor.textPrimary)
+                .padding(.horizontal, 16).padding(.vertical, 9)
+                .background(Capsule().fill(DSColor.card))
+                .overlay(Capsule().strokeBorder(DSColor.accent.opacity(0.4), lineWidth: 1))
+                .padding(.bottom, 80)
+                .transition(.opacity.combined(with: .move(edge: .bottom)))
+        }
     }
 
     // MARK: Bars
@@ -78,10 +101,11 @@ struct ReaderView: View {
             }
             Spacer()
             HStack(spacing: 16) {
-                Button { bookmarked.toggle() } label: {
+                Button { toggleBookmark() } label: {
                     Image(systemName: bookmarked ? "bookmark.fill" : "bookmark")
                         .foregroundStyle(bookmarked ? DSColor.accent : DSColor.textBody)
                 }
+                .accessibilityIdentifier("reader-bookmark")
                 Button { cycleFontScale() } label: {
                     Text("Aa").font(DSFont.serif(15)).foregroundStyle(DSColor.textBody)
                 }
@@ -172,6 +196,7 @@ struct ReaderView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .contentShape(Rectangle())
                         .onTapGesture { toggleReveal(index) }
+                        .onLongPressGesture { highlight(paragraph) }
                     if revealed.contains(index), index < chapter.original.count {
                         HStack(alignment: .top, spacing: 12) {
                             Capsule().fill(DSColor.accent.opacity(0.6)).frame(width: 2.5)
@@ -257,6 +282,28 @@ struct ReaderView: View {
         .disabled(disabled)
     }
 
+    /// Sync the bookmark icon and record that this chapter was opened.
+    private func enterChapter() {
+        bookmarked = library.isBookmarked(currentNumber)
+        guard !isLocked else { return }
+        library.recordProgress(chapterNumber: currentNumber, fraction: 0.25)
+    }
+
+    private func toggleBookmark() {
+        bookmarked = library.toggleBookmark(currentNumber)
+    }
+
+    /// Long-press a 译文 paragraph to brush a 划线 into 笔记.
+    private func highlight(_ excerpt: String) {
+        guard !isLocked else { return }
+        library.addHighlight(chapterNumber: currentNumber, excerpt: excerpt)
+        withAnimation(.easeOut(duration: 0.2)) { savedToast = true }
+        Task {
+            try? await Task.sleep(for: .seconds(1.4))
+            withAnimation(.easeIn(duration: 0.3)) { savedToast = false }
+        }
+    }
+
     private func toggleReveal(_ index: Int) {
         withAnimation(.easeOut(duration: 0.3)) {
             if revealed.contains(index) { revealed.remove(index) } else { revealed.insert(index) }
@@ -277,6 +324,8 @@ struct ReaderView: View {
     private func step(_ delta: Int) {
         guard let idx = numbers.firstIndex(of: currentNumber),
               numbers.indices.contains(idx + delta) else { return }
+        // Reaching the next/previous chapter counts the one we leave as read.
+        if !isLocked { library.recordProgress(chapterNumber: currentNumber, fraction: 1.0) }
         withAnimation(.easeInOut(duration: 0.25)) {
             revealed.removeAll()
             currentNumber = numbers[idx + delta]

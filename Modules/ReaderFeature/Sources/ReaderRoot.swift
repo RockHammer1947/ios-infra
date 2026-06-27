@@ -1,5 +1,6 @@
 import DaodejingContent
 import DesignSystem
+import Library
 import Purchases
 import SwiftUI
 
@@ -20,6 +21,7 @@ public struct ReaderRoot: View {
     public var body: some View {
         RootTabView(repository: repository)
             .environment(store)
+            .modelContainer(LibraryContainer.shared)
             .tint(DSColor.accent)
             .dsTheme(theme)
             .task { await store.loadProducts() }

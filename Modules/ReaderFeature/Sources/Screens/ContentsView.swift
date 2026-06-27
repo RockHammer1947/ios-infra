@@ -1,12 +1,15 @@
 import DaodejingContent
 import DesignSystem
+import Library
 import Purchases
+import SwiftData
 import SwiftUI
 
 /// 经文 — the table of contents, split into 道经 / 德经 with search.
 struct ContentsView: View {
     let repository: any ContentRepository
     @Environment(StoreModel.self) private var store
+    @Query(filter: #Predicate<ChapterProgress> { $0.fraction >= 0.95 }) private var read: [ChapterProgress]
     @State private var book: Book = .dao
     @State private var query = ""
 
@@ -14,6 +17,8 @@ struct ContentsView: View {
         let base = query.isEmpty ? repository.chapters(in: book) : repository.search(query)
         return base.sorted { $0.number < $1.number }
     }
+
+    private var readNumbers: Set<Int> { Set(read.map(\.chapterNumber)) }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -31,8 +36,8 @@ struct ContentsView: View {
             .padding(.top, 18)
 
             HStack(spacing: 10) {
-                Text("已读 0 / 81").font(DSFont.sans(11.5)).foregroundStyle(DSColor.textTertiary)
-                DSProgressBar(progress: 0, height: 2)
+                Text("已读 \(readNumbers.count) / 81").font(DSFont.sans(11.5)).foregroundStyle(DSColor.textTertiary)
+                DSProgressBar(progress: Double(readNumbers.count) / 81, height: 2)
             }
             .padding(.top, 16)
 
@@ -42,7 +47,8 @@ struct ContentsView: View {
                         NavigationLink(value: chapter.number) {
                             ChapterRow(
                                 chapter: chapter,
-                                locked: ReaderProducts.access.isLocked(chapter.number, unlocked: store.isUnlocked)
+                                locked: ReaderProducts.access.isLocked(chapter.number, unlocked: store.isUnlocked),
+                                read: readNumbers.contains(chapter.number)
                             )
                         }
                         .buttonStyle(.plain)
@@ -61,6 +67,7 @@ struct ContentsView: View {
 private struct ChapterRow: View {
     let chapter: Chapter
     let locked: Bool
+    let read: Bool
 
     var body: some View {
         HStack(spacing: 14) {
@@ -78,6 +85,8 @@ private struct ChapterRow: View {
             Spacer()
             if locked {
                 Image(systemName: "lock.fill").font(.system(size: 10)).foregroundStyle(DSColor.textFaint)
+            } else if read {
+                Circle().fill(DSColor.accent).frame(width: 7, height: 7)
             } else {
                 Circle().strokeBorder(DSColor.border, lineWidth: 1).frame(width: 7, height: 7)
             }

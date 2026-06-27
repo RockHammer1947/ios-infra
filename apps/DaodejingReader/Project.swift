@@ -11,6 +11,7 @@ let project = Project.app(
         .project(target: "DesignSystem", path: "../../Modules/DesignSystem"),
         .project(target: "DaodejingContent", path: "../../Modules/DaodejingContent"),
         .project(target: "Purchases", path: "../../Modules/Purchases"),
+        .project(target: "Library", path: "../../Modules/Library"),
         .project(target: "ReaderFeature", path: "../../Modules/ReaderFeature"),
     ]
 )

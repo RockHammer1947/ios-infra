@@ -41,7 +41,7 @@ struct RootTabView: View {
                     switch tab {
                     case .today: TodayView(repository: repository)
                     case .contents: ContentsView(repository: repository)
-                    case .notes: NotesView()
+                    case .notes: NotesView(repository: repository)
                     case .profile: ProfileView(repository: repository)
                     }
                 }
