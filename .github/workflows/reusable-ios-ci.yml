@@ -20,6 +20,11 @@ on:
         required: false
         type: string
         default: "16.1"
+      test-device:
+        description: "Simulator device name to run tests on"
+        required: false
+        type: string
+        default: "iPhone SE (3rd generation)"
 
 jobs:
   build-test:
@@ -47,6 +52,7 @@ jobs:
       - name: Build & Test
         env:
           APP_SCHEME: ${{ inputs.scheme }}
+          TEST_DEVICE: ${{ inputs.test-device }}
         run: bundle exec fastlane ios test
 
       - name: Upload test results

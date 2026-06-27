@@ -26,10 +26,13 @@ platform :ios do
   desc "Generate the project and run unit + UI tests on a simulator (no signing)"
   lane :test do
     generate_project
+    # Device name must exist in the runner's Xcode; override per CI image via
+    # TEST_DEVICE. iPhone SE (3rd generation) ships with every recent Xcode.
+    device = ENV["TEST_DEVICE"] || "iPhone SE (3rd generation)"
     run_tests(
       workspace: WORKSPACE,
       scheme: APP_SCHEME,
-      destination: "platform=iOS Simulator,name=iPhone 15",
+      destination: "platform=iOS Simulator,name=#{device}",
       code_coverage: true,
       result_bundle: true,
       output_directory: "fastlane/test_output"
