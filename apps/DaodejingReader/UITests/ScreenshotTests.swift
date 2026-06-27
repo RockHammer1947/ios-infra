@@ -15,6 +15,7 @@ final class ScreenshotTests: XCTestCase {
         app.launch()
 
         _ = app.staticTexts["今日"].waitForExistence(timeout: 15)
+        Thread.sleep(forTimeInterval: 1.5) // let the first frame paint
         capture(app, "01-today")
 
         tap(app.staticTexts["经文"])
@@ -54,8 +55,9 @@ final class ScreenshotTests: XCTestCase {
     }
 
     private func tap(_ element: XCUIElement) {
-        if element.waitForExistence(timeout: 5), element.isHittable {
+        if element.waitForExistence(timeout: 6) {
             element.tap()
+            Thread.sleep(forTimeInterval: 0.6) // let the transition settle
         }
     }
 
