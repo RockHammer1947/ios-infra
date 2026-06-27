@@ -1,3 +1,4 @@
+import Audio
 import DaodejingContent
 import DesignSystem
 import Library
@@ -35,6 +36,7 @@ struct ReaderView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
     @Environment(StoreModel.self) private var store
+    @Environment(SpeechPlayer.self) private var speech
 
     private var library: LibraryStore { LibraryStore(modelContext) }
 
@@ -61,6 +63,9 @@ struct ReaderView: View {
                             .padding(.top, 18)
                             .padding(.bottom, 40)
                     }
+                }
+                if Features.audio, speech.isActive(chapter: currentNumber), let chapter {
+                    ListenBar(chapter: currentNumber, lines: chapter.vernacular)
                 }
                 footer
             }
@@ -101,6 +106,19 @@ struct ReaderView: View {
             }
             Spacer()
             HStack(spacing: 16) {
+                if Features.audio, !isLocked {
+                    Button { listen() } label: {
+                        Image(
+                            systemName: speech.isActive(chapter: currentNumber) && speech.isPlaying
+                                ? "speaker.wave.2.fill" : "speaker.wave.2"
+                        )
+                        .foregroundStyle(
+                            speech.isActive(chapter: currentNumber)
+                                ? DSColor.accent : DSColor.textBody
+                        )
+                    }
+                    .accessibilityIdentifier("reader-listen")
+                }
                 Button { toggleBookmark() } label: {
                     Image(systemName: bookmarked ? "bookmark.fill" : "bookmark")
                         .foregroundStyle(bookmarked ? DSColor.accent : DSColor.textBody)
@@ -291,6 +309,14 @@ struct ReaderView: View {
 
     private func toggleBookmark() {
         bookmarked = library.toggleBookmark(currentNumber)
+    }
+
+    /// Start (or pause/resume) reading the 白话 of this chapter aloud.
+    private func listen() {
+        guard let chapter else { return }
+        withAnimation(.easeOut(duration: 0.25)) {
+            speech.toggle(chapter: currentNumber, lines: chapter.vernacular)
+        }
     }
 
     /// Long-press a 译文 paragraph to brush a 划线 into 笔记.

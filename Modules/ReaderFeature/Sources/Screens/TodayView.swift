@@ -1,3 +1,4 @@
+import Audio
 import DaodejingContent
 import DesignSystem
 import SwiftUI
@@ -5,6 +6,7 @@ import SwiftUI
 /// 今日 — the daily chapter, framed by a breathing orb.
 struct TodayView: View {
     let repository: any ContentRepository
+    @Environment(SpeechPlayer.self) private var speech
 
     private var chapters: [Chapter] { repository.allChapters() }
 
@@ -85,19 +87,28 @@ struct TodayView: View {
         }
     }
 
-    private func listenRow(_: Chapter) -> some View {
-        HStack(spacing: 13) {
-            HStack(spacing: 9) {
-                Image(systemName: "play.fill").font(.system(size: 11))
-                Text("聆听今日").font(DSFont.sans(13.5, weight: .medium))
+    private func listenRow(_ chapter: Chapter) -> some View {
+        let active = speech.isActive(chapter: chapter.number) && speech.isPlaying
+        return HStack(spacing: 13) {
+            Button {
+                withAnimation(.easeOut(duration: 0.25)) {
+                    speech.toggle(chapter: chapter.number, lines: chapter.vernacular)
+                }
+            } label: {
+                HStack(spacing: 9) {
+                    Image(systemName: active ? "pause.fill" : "play.fill").font(.system(size: 11))
+                    Text(active ? "朗读中" : "聆听今日").font(DSFont.sans(13.5, weight: .medium))
+                }
+                .foregroundStyle(DSColor.accentSoft)
+                .padding(.horizontal, 20)
+                .padding(.vertical, 12)
+                .overlay(Capsule().strokeBorder(DSColor.accent.opacity(0.4), lineWidth: 1))
+                .background(Capsule().fill(DSColor.accent.opacity(0.12)))
             }
-            .foregroundStyle(DSColor.accentSoft)
-            .padding(.horizontal, 20)
-            .padding(.vertical, 12)
-            .overlay(Capsule().strokeBorder(DSColor.accent.opacity(0.4), lineWidth: 1))
-            .background(Capsule().fill(DSColor.accent.opacity(0.12)))
+            .buttonStyle(.plain)
+            .accessibilityIdentifier("today-listen")
 
-            Text("3:20 · 古琴").font(DSFont.sans(12)).foregroundStyle(DSColor.textTertiary)
+            Text("系统人声朗读").font(DSFont.sans(12)).foregroundStyle(DSColor.textTertiary)
         }
         .padding(.top, 26)
     }

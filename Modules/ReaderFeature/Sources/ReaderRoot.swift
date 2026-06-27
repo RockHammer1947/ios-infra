@@ -1,3 +1,4 @@
+import Audio
 import DaodejingContent
 import DesignSystem
 import Library
@@ -9,6 +10,7 @@ import SwiftUI
 public struct ReaderRoot: View {
     @AppStorage("theme") private var themeRaw = DSTheme.dark.rawValue
     @State private var store = StoreModel(productIDs: ReaderProducts.all)
+    @State private var speech = SpeechPlayer()
 
     private let repository: any ContentRepository
 
@@ -21,6 +23,7 @@ public struct ReaderRoot: View {
     public var body: some View {
         RootTabView(repository: repository)
             .environment(store)
+            .environment(speech)
             .modelContainer(LibraryContainer.shared)
             .tint(DSColor.accent)
             .dsTheme(theme)

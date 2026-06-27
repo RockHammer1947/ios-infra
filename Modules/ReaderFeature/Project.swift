@@ -9,5 +9,6 @@ let project = Project.module(
         .project(target: "DaodejingContent", path: "../DaodejingContent"),
         .project(target: "Purchases", path: "../Purchases"),
         .project(target: "Library", path: "../Library"),
+        .project(target: "Audio", path: "../Audio"),
     ]
 )

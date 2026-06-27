@@ -43,6 +43,12 @@ final class ScreenshotTests: XCTestCase {
         tap(app.buttons["原文注释"])
         capture(app, "06-reader-annotated")
 
+        // M9: start 聆听 — the audio player bar slides up.
+        tap(app.buttons["reader-listen"])
+        _ = app.buttons["listen-toggle"].waitForExistence(timeout: 3)
+        capture(app, "06b-reader-listen")
+        tap(app.buttons["listen-stop"])
+
         tap(app.buttons["reader-back"])
 
         // A gated chapter shows the paywall (free preview is 1–3).
