@@ -35,6 +35,10 @@ platform :ios do
       destination: "platform=iOS Simulator,name=#{device}",
       code_coverage: true,
       result_bundle: true,
+      # The simulator occasionally drops a background assertion on a cold app
+      # launch, failing a UI test that is otherwise green. Retry such flakes
+      # rather than failing the whole run on a transient.
+      number_of_retries: 2,
       output_directory: "fastlane/test_output"
     )
   end
