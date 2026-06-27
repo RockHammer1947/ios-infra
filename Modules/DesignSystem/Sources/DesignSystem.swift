@@ -9,9 +9,9 @@ public enum DesignSystem {
     /// Adaptive background that works on both iOS and macOS.
     public static var background: Color {
         #if os(macOS)
-        Color(nsColor: .windowBackgroundColor)
+            Color(nsColor: .windowBackgroundColor)
         #else
-        Color(uiColor: .systemBackground)
+            Color(uiColor: .systemBackground)
         #endif
     }
 }

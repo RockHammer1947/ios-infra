@@ -9,8 +9,8 @@
 --wrapparameters before-first
 --wrapcollections before-first
 --importgrouping testable-bottom
---commas inline
+--commas always
 --trimwhitespace always
 
 # Rules we intentionally disable
---disable redundantSelf,wrapMultilineStatementBraces,wrapComments
+--disable redundantSelf,wrapMultilineStatementBraces
