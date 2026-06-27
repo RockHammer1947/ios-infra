@@ -12,6 +12,7 @@ public extension Project {
     static func module(
         name: String,
         product: Product = .framework,
+        resources: ResourceFileElements? = nil,
         dependencies: [TargetDependency] = []
     ) -> Project {
         let bundleId = "\(Constants.organizationIdentifier).\(name.lowercased())"
@@ -28,6 +29,7 @@ public extension Project {
                     bundleId: bundleId,
                     deploymentTargets: Constants.deploymentTargets,
                     sources: ["Sources/**"],
+                    resources: resources,
                     dependencies: dependencies
                 ),
                 .target(
