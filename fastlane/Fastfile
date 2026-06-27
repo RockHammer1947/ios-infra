@@ -12,7 +12,9 @@ platform :ios do
   lane :lint do
     Dir.chdir("..") do
       sh("mise", "exec", "--", "swiftlint", "lint", "--strict")
-      sh("mise", "exec", "--", "swiftformat", "--lint", ".")
+      # Scope to our source roots so CI-vendored gems (vendor/bundle) and
+      # Tuist's Derived output are never linted.
+      sh("mise", "exec", "--", "swiftformat", "apps", "Modules", "Tuist", "Workspace.swift", "--lint")
     end
   end
 

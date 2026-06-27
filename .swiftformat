@@ -1,7 +1,7 @@
 # Shared formatting rules — run as a lint gate in CI, autoformat locally.
 --swiftversion 6.0
 
---exclude Derived,.build,Tuist/Templates
+--exclude Derived,.build,Tuist/Templates,vendor,Pods,fastlane
 
 --indent 4
 --maxwidth 140
