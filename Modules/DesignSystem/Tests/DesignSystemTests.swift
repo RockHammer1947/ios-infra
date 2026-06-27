@@ -1,5 +1,5 @@
-@testable import DesignSystem
 import Testing
+@testable import DesignSystem
 
 @Suite("DesignSystem")
 struct DesignSystemTests {

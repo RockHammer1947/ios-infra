@@ -1,5 +1,5 @@
-@testable import DaodejingReader
 import Testing
+@testable import DaodejingReader
 
 @Suite("DaodejingReader smoke tests")
 struct DaodejingReaderTests {

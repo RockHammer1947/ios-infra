@@ -1,5 +1,5 @@
-@testable import {{ name }}
 import Testing
+@testable import {{ name }}
 
 @Suite("{{ name }} smoke tests")
 struct {{ name }}Tests {

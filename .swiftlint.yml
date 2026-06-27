@@ -8,6 +8,11 @@ excluded:
   - Tuist/ProjectDescriptionHelpers
   - Tuist/Templates
 
+disabled_rules:
+  # SwiftFormat owns comma style (it requires trailing commas on multiline
+  # collections); disable SwiftLint's opposing rule to avoid a tug-of-war.
+  - trailing_comma
+
 opt_in_rules:
   - empty_count
   - force_unwrapping

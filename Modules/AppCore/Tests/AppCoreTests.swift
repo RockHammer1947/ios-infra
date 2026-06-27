@@ -1,5 +1,5 @@
-@testable import AppCore
 import Testing
+@testable import AppCore
 
 @Suite("AppCore")
 struct AppCoreTests {
