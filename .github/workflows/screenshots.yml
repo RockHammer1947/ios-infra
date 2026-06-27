@@ -10,6 +10,9 @@ on:
       - ".github/workflows/screenshots.yml"
       - "apps/DaodejingReader/UITests/**"
 
+permissions:
+  contents: write
+
 jobs:
   shots:
     runs-on: macos-14
@@ -50,3 +53,15 @@ jobs:
           name: screenshots
           path: screenshots
           if-no-files-found: warn
+
+      # Egress policy blocks the artifact blob host, so also publish the PNGs to
+      # a dedicated branch that can be fetched over git.
+      - name: Publish screenshots to branch
+        if: always()
+        run: |
+          git config user.name "screenshot-bot"
+          git config user.email "screenshot-bot@users.noreply.github.com"
+          git checkout -B screenshots-latest
+          git add -f screenshots
+          git commit -m "screenshots @ ${GITHUB_SHA}" || echo "nothing to commit"
+          git push -f origin screenshots-latest
