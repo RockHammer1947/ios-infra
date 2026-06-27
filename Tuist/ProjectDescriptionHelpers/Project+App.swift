@@ -39,8 +39,8 @@ public extension Project {
                     ]),
                     sources: ["Sources/**"],
                     resources: ["Resources/**"],
-                    settings: .settings(base: ["ASSETCATALOG_COMPILER_APPICON_NAME": "AppIcon"]),
-                    dependencies: dependencies
+                    dependencies: dependencies,
+                    settings: .settings(base: ["ASSETCATALOG_COMPILER_APPICON_NAME": "AppIcon"])
                 ),
                 .target(
                     name: "\(name)Tests",
