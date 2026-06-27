@@ -6,7 +6,9 @@ import SwiftData
 /// previews use an in-memory one so nothing touches disk.
 public enum LibraryContainer {
     /// Every `@Model` the library persists. New models get added here once.
-    public static let schema = Schema([Mark.self, ChapterProgress.self])
+    /// Computed (not a stored `static let`) because `Schema` isn't `Sendable`,
+    /// which a shared stored property would require under strict concurrency.
+    public static var schema: Schema { Schema([Mark.self, ChapterProgress.self]) }
 
     /// On-disk container backing the running app. Falls back to in-memory if the
     /// store can't be opened so the app still launches (worst case: marks don't
