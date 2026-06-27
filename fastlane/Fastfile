@@ -39,6 +39,20 @@ platform :ios do
     )
   end
 
+  desc "Run only the screenshot UI test, capturing screens into the xcresult"
+  lane :screenshots do
+    generate_project
+    device = ENV["TEST_DEVICE"] || "iPhone SE (3rd generation)"
+    run_tests(
+      workspace: WORKSPACE,
+      scheme: APP_SCHEME,
+      destination: "platform=iOS Simulator,name=#{device}",
+      only_testing: ["DaodejingReaderUITests/ScreenshotTests/testCaptureScreens"],
+      result_bundle: true,
+      output_directory: "fastlane/test_output"
+    )
+  end
+
   # --- Distribution ----------------------------------------------------------
 
   desc "Build and upload a build to TestFlight"

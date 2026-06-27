@@ -66,6 +66,7 @@ struct ReaderView: View {
             Button { dismiss() } label: {
                 Image(systemName: "chevron.left").foregroundStyle(DSColor.textBody)
             }
+            .accessibilityIdentifier("reader-back")
             Spacer()
             VStack(spacing: 1) {
                 Text("第\(ChineseNumber.of(currentNumber))章")

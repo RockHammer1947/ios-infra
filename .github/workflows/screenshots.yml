@@ -1,0 +1,52 @@
+name: Screenshots
+
+# Capture the live SwiftUI screens on a simulator and publish them as an
+# artifact. Runs when this workflow or the UI tests change, or on demand.
+on:
+  workflow_dispatch:
+  push:
+    branches: ["claude/**"]
+    paths:
+      - ".github/workflows/screenshots.yml"
+      - "apps/DaodejingReader/UITests/**"
+
+jobs:
+  shots:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select Xcode 16.1
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: "16.1"
+
+      - name: Install pinned tools
+        uses: jdx/mise-action@v2
+
+      - name: Set up Ruby + bundler cache
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+          bundler-cache: true
+
+      - name: Capture screens
+        env:
+          APP_SCHEME: DaodejingReader
+          TEST_DEVICE: "iPhone SE (3rd generation)"
+        run: bundle exec fastlane ios screenshots
+
+      - name: Extract screenshots from xcresult
+        run: |
+          brew install chargepoint/xcparse/xcparse
+          mkdir -p screenshots
+          xcparse screenshots fastlane/test_output/*.xcresult screenshots || true
+          ls -la screenshots || true
+
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots
+          path: screenshots
+          if-no-files-found: warn
