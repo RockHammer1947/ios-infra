@@ -28,6 +28,23 @@ open iOSInfra.xcworkspace
 Generated `*.xcodeproj`/`*.xcworkspace` are **not committed** — always regenerate
 with `tuist generate`.
 
+### Run / debug locally
+
+- **On the Mac** (no signing needed): pick the `DaodejingReader` scheme, choose the
+  **My Mac** destination, `⌘R`.
+- **On a real iPhone**: export your Apple Developer **Team ID** before generating so
+  it's baked into the project (never committed) and survives regeneration:
+
+  ```bash
+  export DEVELOPMENT_TEAM=XXXXXXXXXX   # Xcode ▸ Settings ▸ Accounts ▸ your team
+  mise exec -- tuist generate
+  ```
+
+  Then select your device and `⌘R`; first run, trust the developer cert on the
+  phone under **Settings ▸ General ▸ VPN & Device Management**.
+- **Test the paywall locally**: Edit Scheme ▸ Run ▸ Options ▸ StoreKit Configuration →
+  `apps/DaodejingReader/StoreKit/Configuration.storekit`.
+
 ## Everyday commands
 
 ```bash

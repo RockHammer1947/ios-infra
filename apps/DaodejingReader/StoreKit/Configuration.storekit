@@ -18,7 +18,7 @@
           "locale" : "en_US"
         }
       ],
-      "productID" : "com.example.daodejing.fullaccess",
+      "productID" : "com.rockhammerlabs.daodejing.fullaccess",
       "referenceName" : "Full Access",
       "type" : "NonConsumable"
     }

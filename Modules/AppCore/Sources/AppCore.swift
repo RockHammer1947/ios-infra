@@ -10,6 +10,6 @@ public enum AppCore {
 
     /// A namespaced logger every module/app can reuse.
     public static func logger(category: String) -> Logger {
-        Logger(subsystem: "com.example.appcore", category: category)
+        Logger(subsystem: "com.rockhammerlabs.appcore", category: category)
     }
 }
