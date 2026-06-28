@@ -33,6 +33,7 @@ struct ReaderView: View {
     @State private var bookmarked = false
     @State private var savedToast = false
     @AppStorage("fontScale") private var fontScale = 1.0
+    @AppStorage("speechRate") private var speechRate = 1.0
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
     @Environment(StoreModel.self) private var store
@@ -314,6 +315,7 @@ struct ReaderView: View {
     /// Start (or pause/resume) reading the 白话 of this chapter aloud.
     private func listen() {
         guard let chapter else { return }
+        speech.rateScale = speechRate
         withAnimation(.easeOut(duration: 0.25)) {
             speech.toggle(chapter: currentNumber, lines: chapter.vernacular)
         }

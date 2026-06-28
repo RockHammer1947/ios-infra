@@ -7,6 +7,7 @@ import SwiftUI
 struct TodayView: View {
     let repository: any ContentRepository
     @Environment(SpeechPlayer.self) private var speech
+    @AppStorage("speechRate") private var speechRate = 1.0
 
     private var chapters: [Chapter] { repository.allChapters() }
 
@@ -91,6 +92,7 @@ struct TodayView: View {
         let active = speech.isActive(chapter: chapter.number) && speech.isPlaying
         return HStack(spacing: 13) {
             Button {
+                speech.rateScale = speechRate
                 withAnimation(.easeOut(duration: 0.25)) {
                     speech.toggle(chapter: chapter.number, lines: chapter.vernacular)
                 }

@@ -64,6 +64,12 @@ final class ScreenshotTests: XCTestCase {
 
         tap(app.staticTexts["我的"])
         capture(app, "09-profile")
+
+        // M8: 设置 sheet.
+        tap(app.buttons["open-settings"])
+        _ = app.staticTexts["外观"].waitForExistence(timeout: 4)
+        capture(app, "10-settings")
+        tap(app.buttons["settings-done"])
     }
 
     private func tap(_ element: XCUIElement) {

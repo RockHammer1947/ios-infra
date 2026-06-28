@@ -15,6 +15,10 @@ public final class SpeechPlayer: NSObject {
     public private(set) var spokenCount = 0
     public private(set) var totalCount = 0
 
+    /// Speed multiplier applied to the default speech rate (1.0 = normal).
+    /// Settings drives this; clamped to a sane reading range.
+    public var rateScale: Double = 1.0
+
     @ObservationIgnored private let synthesizer = AVSpeechSynthesizer()
 
     override public init() {
@@ -48,7 +52,8 @@ public final class SpeechPlayer: NSObject {
         for segment in segments {
             let utterance = AVSpeechUtterance(string: segment)
             utterance.voice = AVSpeechSynthesisVoice(language: "zh-CN")
-            utterance.rate = AVSpeechUtteranceDefaultSpeechRate * 0.92
+            let scale = Float(min(max(rateScale, 0.5), 1.5))
+            utterance.rate = AVSpeechUtteranceDefaultSpeechRate * 0.92 * scale
             utterance.postUtteranceDelay = 0.15
             synthesizer.speak(utterance)
         }
