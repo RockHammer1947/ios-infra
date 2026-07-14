@@ -9,6 +9,8 @@ import SwiftUI
 struct ContentsView: View {
     let repository: any ContentRepository
     @Environment(StoreModel.self) private var store
+    @Environment(TrialAccess.self) private var trial
+    @Environment(\.appLanguage) private var lang
     @Query(filter: #Predicate<ChapterProgress> { $0.fraction >= 0.95 }) private var read: [ChapterProgress]
     @State private var book: Book = .dao
     @State private var query = ""
@@ -23,7 +25,7 @@ struct ContentsView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack {
-                Text("经文").font(DSFont.serif(26, weight: .semibold)).foregroundStyle(DSColor.textPrimary)
+                Text(lang.pick("经文", "Text")).font(DSFont.serif(26, weight: .semibold)).foregroundStyle(DSColor.textPrimary)
                 Spacer()
                 Image(systemName: "magnifyingglass").foregroundStyle(DSColor.textSecondary)
             }
@@ -31,15 +33,30 @@ struct ContentsView: View {
 
             DSSegmentedControl(
                 selection: $book,
-                options: [(Book.dao, Book.dao.rangeLabel), (Book.de, Book.de.rangeLabel)]
+                options: [
+                    (Book.dao, lang.pick(Book.dao.rangeLabel, "Book of the Way · 1–37")),
+                    (Book.de, lang.pick(Book.de.rangeLabel, "Book of Virtue · 38–81")),
+                ]
             )
             .padding(.top, 18)
 
             HStack(spacing: 10) {
-                Text("已读 \(readNumbers.count) / 81").font(DSFont.sans(11.5)).foregroundStyle(DSColor.textTertiary)
+                Text(lang.pick("已读 \(readNumbers.count) / 81", "\(readNumbers.count) / 81 read")).font(DSFont.sans(11.5))
+                    .foregroundStyle(DSColor.textTertiary)
                 DSProgressBar(progress: Double(readNumbers.count) / 81, height: 2)
             }
             .padding(.top, 16)
+
+            if !store.isUnlocked {
+                Text(
+                    trial.remaining > 0
+                        ? lang.pick("免费试读 · 还剩 \(trial.remaining) 章（任意选）", "Free preview · \(trial.remaining) chapters left (your pick)")
+                        : lang.pick("免费试读已用完 · 购买后畅读全本", "Free preview used up · unlock the full text")
+                )
+                .font(DSFont.sans(11))
+                .foregroundStyle(DSColor.accentSoft)
+                .padding(.top, 10)
+            }
 
             ScrollView {
                 LazyVStack(spacing: 0) {
@@ -47,7 +64,8 @@ struct ContentsView: View {
                         NavigationLink(value: chapter.number) {
                             ChapterRow(
                                 chapter: chapter,
-                                locked: ReaderProducts.access.isLocked(chapter.number, unlocked: store.isUnlocked),
+                                numeral: lang.pick(chapter.chineseNumeral, "\(chapter.number)"),
+                                locked: trial.isLocked(chapter.number, purchased: store.isUnlocked),
                                 read: readNumbers.contains(chapter.number)
                             )
                         }
@@ -66,13 +84,14 @@ struct ContentsView: View {
 /// One row in the contents list: numeral · title · 原文 teaser · read dot.
 private struct ChapterRow: View {
     let chapter: Chapter
+    let numeral: String
     let locked: Bool
     let read: Bool
 
     var body: some View {
         HStack(spacing: 14) {
-            Text(chapter.chineseNumeral)
-                .font(DSFont.serif(chapter.chineseNumeral.count > 2 ? 15 : 18))
+            Text(numeral)
+                .font(DSFont.serif(numeral.count > 2 ? 15 : 18))
                 .foregroundStyle(DSColor.accentSoft)
                 .frame(width: 32, alignment: .leading)
             VStack(alignment: .leading, spacing: 2) {

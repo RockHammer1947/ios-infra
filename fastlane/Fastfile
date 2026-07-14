@@ -93,6 +93,8 @@ platform :ios do
   desc "Install deps, then generate the Xcode workspace with Tuist"
   private_lane :generate_project do
     Dir.chdir("..") do
+      sh("../scripts/fetch-sherpa-onnx.sh")
+      sh("../scripts/fetch-tts-models.sh")
       sh("mise", "exec", "--", "tuist", "install")
       sh("mise", "exec", "--", "tuist", "generate", "--no-open")
     end

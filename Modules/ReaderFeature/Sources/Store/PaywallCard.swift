@@ -1,3 +1,4 @@
+import DaodejingContent
 import DesignSystem
 import Purchases
 import StoreKit
@@ -6,6 +7,7 @@ import SwiftUI
 /// The paywall shown when a gated chapter is opened: unlock all 81 chapters.
 struct PaywallCard: View {
     @Environment(StoreModel.self) private var store
+    @Environment(\.appLanguage) private var lang
     @State private var working = false
 
     var body: some View {
@@ -15,13 +17,16 @@ struct PaywallCard: View {
                 .foregroundStyle(DSColor.accent)
 
             VStack(spacing: 6) {
-                Text("解锁全本")
+                Text(lang.pick("解锁全本", "Unlock the full text"))
                     .font(DSFont.serif(22, weight: .semibold))
                     .foregroundStyle(DSColor.textPrimary)
-                Text("免费试读前三章 · 购买后畅读全部 81 章，永久离线")
-                    .font(DSFont.sans(12.5))
-                    .multilineTextAlignment(.center)
-                    .foregroundStyle(DSColor.textTertiary)
+                Text(lang.pick(
+                    "免费试读已用完 · 购买后畅读全部 81 章，永久离线",
+                    "Free preview used up · read all 81 chapters, forever, offline"
+                ))
+                .font(DSFont.sans(12.5))
+                .multilineTextAlignment(.center)
+                .foregroundStyle(DSColor.textTertiary)
             }
 
             Button {
@@ -40,7 +45,7 @@ struct PaywallCard: View {
             .buttonStyle(.plain)
             .disabled(working || store.products.isEmpty)
 
-            Button("恢复购买") {
+            Button(lang.pick("恢复购买", "Restore purchase")) {
                 Task { await store.restore() }
             }
             .font(DSFont.sans(12))
@@ -53,8 +58,9 @@ struct PaywallCard: View {
     }
 
     private var buttonTitle: String {
-        if let price = store.primaryDisplayPrice { return "解锁全本 · \(price)" }
-        return "解锁全本"
+        let base = lang.pick("解锁全本", "Unlock all")
+        if let price = store.primaryDisplayPrice { return "\(base) · \(price)" }
+        return base
     }
 
     private func buy() async {

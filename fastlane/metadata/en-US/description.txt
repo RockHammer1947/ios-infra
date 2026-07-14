@@ -1,4 +1,14 @@
-Placeholder description. Replace before submitting to the App Store.
+Chang Dao is a quiet reader for the Tao Te Ching.
 
-This app is currently an infrastructure scaffold used to validate the build,
-test, signing and release pipeline end to end.
+All eighty-one chapters, each with the original text, a plain-language rendering, and a deeper reflection — bringing words written over two thousand years ago into your day.
+
+• Text & meaning: tap a line and its plain meaning quietly unfolds beneath it.
+• Reflection: a chapter-by-chapter reading of what "the Way" and "virtue" point to.
+• Listen: a natural on-device neural voice reads both the text and the reflection, and keeps playing when the screen locks; chapters you have heard are cached for instant replay.
+• Notes: long-press to highlight, bookmark chapters, and return to the lines that move you.
+• Daily chapter: one chapter a day, with a gentle reminder.
+• Fully on-device and offline: no network, no data collection.
+
+Read any five chapters free; unlock the full text once, forever, offline.
+
+May you find a little quiet here.

@@ -12,10 +12,8 @@ import PackageDescription
 
 // External Swift Package Manager dependencies for the whole monorepo.
 // Add packages here once and reference them from any app/module via
-// `.external(name: "...")`. Empty by design — the infra ships with none.
+// `.external(name: "...")`.
 let package = Package(
     name: "iOSInfra",
-    dependencies: [
-        // .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", from: "1.17.0"),
-    ]
+    dependencies: []
 )

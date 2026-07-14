@@ -7,6 +7,7 @@ import SwiftUI
 /// 我的 — reading progress (圆满进度 enso), a few stats, and 设置.
 struct ProfileView: View {
     let repository: any ContentRepository
+    @Environment(\.appLanguage) private var lang
     @Query(filter: #Predicate<ChapterProgress> { $0.fraction >= 0.95 }) private var read: [ChapterProgress]
     @Query private var marks: [Mark]
     @State private var showSettings = false
@@ -17,14 +18,15 @@ struct ProfileView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Text("我的").font(DSFont.serif(26, weight: .semibold)).foregroundStyle(DSColor.textPrimary)
+            Text(lang.pick("我的", "Me")).font(DSFont.serif(26, weight: .semibold)).foregroundStyle(DSColor.textPrimary)
                 .padding(.top, 10)
 
             VStack(spacing: 14) {
                 EnsoProgress(total: 81, read: readCount)
                     .frame(width: 180, height: 180)
-                Text("通读 \(readCount) / 81").font(DSFont.sans(13)).foregroundStyle(DSColor.textSecondary)
-                Text("八十一点连成一圆，读毕则一点亮起")
+                Text(lang.pick("通读 \(readCount) / 81", "\(readCount) / 81 read")).font(DSFont.sans(13))
+                    .foregroundStyle(DSColor.textSecondary)
+                Text(lang.pick("八十一点连成一圆，读毕则一点亮起", "Eighty-one points form a circle, one lights up with each chapter read"))
                     .font(DSFont.sans(11.5)).foregroundStyle(DSColor.textFaint)
             }
             .frame(maxWidth: .infinity)
@@ -48,9 +50,9 @@ struct ProfileView: View {
 
     private var statsRow: some View {
         HStack(spacing: 12) {
-            stat("已读", readCount)
-            stat("笔记", noteCount)
-            stat("书签", bookmarkCount)
+            stat(lang.pick("已读", "Read"), readCount)
+            stat(lang.pick("笔记", "Notes"), noteCount)
+            stat(lang.pick("书签", "Bookmarks"), bookmarkCount)
         }
     }
 
@@ -69,7 +71,7 @@ struct ProfileView: View {
         Button { showSettings = true } label: {
             HStack(spacing: 13) {
                 Image(systemName: "gearshape").foregroundStyle(DSColor.accentSoft)
-                Text("设置").font(DSFont.sans(14)).foregroundStyle(DSColor.textBody)
+                Text(lang.pick("设置", "Settings")).font(DSFont.sans(14)).foregroundStyle(DSColor.textBody)
                 Spacer()
                 Image(systemName: "chevron.right").font(.system(size: 11)).foregroundStyle(DSColor.textFaint)
             }

@@ -13,6 +13,7 @@ final class DaodejingReaderUITests: XCTestCase {
     /// settle timeouts; genuine flakes are retried at the `scan` layer.
     func testLaunchTabsAndOpenChapter() {
         let app = XCUIApplication()
+        app.launchArguments = ["skip-launch-animation"]
         app.launch()
 
         // Tabs are visible on launch.

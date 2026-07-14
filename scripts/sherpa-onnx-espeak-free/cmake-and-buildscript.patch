@@ -1,0 +1,66 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 145d395..d0c036a 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -565,10 +565,10 @@ endif()
+ include(json)
+ 
+ if(SHERPA_ONNX_ENABLE_TTS)
+-  include(espeak-ng-for-piper)
+-  set(ESPEAK_NG_DIR ${espeak_ng_SOURCE_DIR})
+-  message(STATUS "ESPEAK_NG_DIR: ${ESPEAK_NG_DIR}")
+-  include(piper-phonemize)
++  # Daodejing build: espeak-ng (GPLv3) and piper-phonemize are removed for
++  # App Store compliance. MeloTTS is lexicon-based and needs neither; the
++  # espeak-dependent frontends are stubbed in csrc/*-lexicon.cc.
++  message(STATUS "espeak-ng/piper-phonemize DISABLED (App Store compliance)")
+ endif()
+ 
+ if(SHERPA_ONNX_ENABLE_SPEAKER_DIARIZATION)
+diff --git a/build-ios.sh b/build-ios.sh
+index a5c6e1b..fcebee9 100755
+--- a/build-ios.sh
++++ b/build-ios.sh
+@@ -130,7 +130,7 @@ mkdir -p "build/simulator/lib"
+ for f in libkaldi-native-fbank-core.a libkissfft-float.a libsherpa-onnx-c-api.a libsherpa-onnx-core.a \
+          libsherpa-onnx-fstfar.a libssentencepiece_core.a \
+          libsherpa-onnx-fst.a libsherpa-onnx-kaldifst-core.a libkaldi-decoder-core.a \
+-         libucd.a libpiper_phonemize.a libespeak-ng.a; do
++         ; do  # espeak-ng/piper_phonemize/libucd removed (GPL / App Store)
+   lipo -create build/simulator_arm64/lib/${f} \
+                build/simulator_x86_64/lib/${f} \
+        -output build/simulator/lib/${f}
+@@ -147,9 +147,6 @@ libtool -static -o build/simulator/libsherpa-onnx.a \
+   build/simulator/lib/libsherpa-onnx-fst.a   \
+   build/simulator/lib/libsherpa-onnx-kaldifst-core.a \
+   build/simulator/lib/libkaldi-decoder-core.a \
+-  build/simulator/lib/libucd.a \
+-  build/simulator/lib/libpiper_phonemize.a \
+-  build/simulator/lib/libespeak-ng.a \
+   build/simulator/lib/libssentencepiece_core.a
+ 
+ libtool -static -o build/os64/libsherpa-onnx.a \
+@@ -161,9 +158,6 @@ libtool -static -o build/os64/libsherpa-onnx.a \
+   build/os64/lib/libsherpa-onnx-fst.a   \
+   build/os64/lib/libsherpa-onnx-kaldifst-core.a \
+   build/os64/lib/libkaldi-decoder-core.a \
+-  build/os64/lib/libucd.a \
+-  build/os64/lib/libpiper_phonemize.a \
+-  build/os64/lib/libespeak-ng.a \
+   build/os64/lib/libssentencepiece_core.a
+ 
+ rm -rf sherpa-onnx.xcframework
+diff --git a/sherpa-onnx/csrc/CMakeLists.txt b/sherpa-onnx/csrc/CMakeLists.txt
+index 30c1256..3d38132 100755
+--- a/sherpa-onnx/csrc/CMakeLists.txt
++++ b/sherpa-onnx/csrc/CMakeLists.txt
+@@ -471,8 +471,7 @@ endif()
+ target_link_libraries(sherpa-onnx-core fstfar fst)
+ 
+ if(SHERPA_ONNX_ENABLE_TTS)
+-  target_link_libraries(sherpa-onnx-core
+-    piper_phonemize)
++  target_link_libraries(sherpa-onnx-core)
+ endif()
+ 
+ if(SHERPA_ONNX_ENABLE_CHECK)

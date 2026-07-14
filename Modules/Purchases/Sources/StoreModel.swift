@@ -1,3 +1,4 @@
+import Foundation
 import Observation
 import StoreKit
 
@@ -25,9 +26,22 @@ public final class StoreModel {
         }
     }
 
+    #if DEBUG
+        /// Debug-only unlock switch, OFF by default: the real trial + paywall +
+        /// StoreKit purchase flow is what development builds exercise. Opt in with
+        /// `DAODEJING_UNLOCK_ALL=1` (scheme ▸ Run ▸ Environment) when a task needs
+        /// all chapters reachable (e.g. screenshot capture). Compiled out of
+        /// Release, so it can never ship unlocked.
+        public static var debugUnlockAll: Bool =
+            ProcessInfo.processInfo.environment["DAODEJING_UNLOCK_ALL"] == "1"
+    #endif
+
     /// True when at least one configured product is entitled.
     public var isUnlocked: Bool {
-        !purchasedIDs.isDisjoint(with: Set(productIDs))
+        #if DEBUG
+            if Self.debugUnlockAll { return true }
+        #endif
+        return !purchasedIDs.isDisjoint(with: Set(productIDs))
     }
 
     /// Localized price of the primary product (e.g. "$6.00" / "¥6.00").

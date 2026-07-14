@@ -4,6 +4,7 @@ included:
   - Modules
 excluded:
   - "**/Derived"
+  - "**/Vendor"
   - "**/.build"
   - Tuist/ProjectDescriptionHelpers
   - Tuist/Templates

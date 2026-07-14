@@ -47,3 +47,9 @@ vendor/bundle/
 
 ## Tooling
 .mise/
+
+## Vendored binary frameworks (fetched by scripts/fetch-sherpa-onnx.sh)
+Modules/Audio/Vendor/
+
+## Bundled TTS voice models (staged by scripts/fetch-tts-models.sh)
+apps/DaodejingReader/BundledTTS/

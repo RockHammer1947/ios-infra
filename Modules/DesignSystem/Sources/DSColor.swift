@@ -6,14 +6,14 @@ public enum DSColor {
     // Surfaces
     public static let background = Color.adaptive(light: Color(hex: 0xF1EFE4), dark: Color(hex: 0x111312))
     public static let surface = Color.adaptive(light: Color(hex: 0xFFFFFF, opacity: 0.5), dark: Color(hex: 0x1B1E1C))
-    public static let card = Color.adaptive(light: Color(hex: 0x4E7160, opacity: 0.07), dark: Color(hex: 0xFFFFFF, opacity: 0.035))
+    public static let card = Color.adaptive(light: Color(hex: 0x8A6D1C, opacity: 0.07), dark: Color(hex: 0xFFFFFF, opacity: 0.035))
     public static let drawer = Color.adaptive(light: Color(hex: 0xE7E3D6), dark: Color(hex: 0x1B1F1C))
     public static let frame = Color.adaptive(light: Color(hex: 0xCFC7B4), dark: Color(hex: 0x070807))
 
-    // Accent — 竹青 (bamboo green)
-    public static let accent = Color.adaptive(light: Color(hex: 0x4E7160), dark: Color(hex: 0x7FAE96))
-    public static let accentSoft = Color.adaptive(light: Color(hex: 0x4E7160), dark: Color(hex: 0x9FC9B4))
-    public static let accentBright = Color.adaptive(light: Color(hex: 0x4E7160), dark: Color(hex: 0xBFE0CF))
+    // Accent — 金 (gold, matched to the 太极 app icon)
+    public static let accent = Color.adaptive(light: Color(hex: 0x8A6D1C), dark: Color(hex: 0xC9A45A))
+    public static let accentSoft = Color.adaptive(light: Color(hex: 0x8A6D1C), dark: Color(hex: 0xD9BC7A))
+    public static let accentBright = Color.adaptive(light: Color(hex: 0x8A6D1C), dark: Color(hex: 0xEAD49A))
     public static let accentWash = accent.opacity(0.12)
 
     // Text

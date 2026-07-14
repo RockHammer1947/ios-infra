@@ -15,3 +15,15 @@ public enum DesignSystem {
         #endif
     }
 }
+
+public extension View {
+    /// Hides the platform navigation chrome (iOS navigation bar / macOS window toolbar).
+    @ViewBuilder
+    func dsHideNavigationChrome() -> some View {
+        #if os(iOS)
+        toolbar(.hidden, for: .navigationBar)
+        #else
+        toolbar(.hidden, for: .windowToolbar)
+        #endif
+    }
+}

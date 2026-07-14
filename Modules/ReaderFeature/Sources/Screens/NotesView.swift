@@ -10,18 +10,19 @@ struct NotesView: View {
     let repository: any ContentRepository
 
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.appLanguage) private var lang
     @Query(sort: \Mark.createdAt, order: .reverse) private var marks: [Mark]
     @State private var filter: Filter = .all
 
     private enum Filter: String, CaseIterable, Identifiable {
         case all, highlight, note, bookmark
         var id: String { rawValue }
-        var label: String {
+        func label(_ lang: ContentLanguage) -> String {
             switch self {
-            case .all: "全部"
-            case .highlight: "划线"
-            case .note: "笔记"
-            case .bookmark: "书签"
+            case .all: lang.pick("全部", "All")
+            case .highlight: lang.pick("划线", "Highlights")
+            case .note: lang.pick("笔记", "Notes")
+            case .bookmark: lang.pick("书签", "Bookmarks")
             }
         }
 
@@ -42,12 +43,12 @@ struct NotesView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Text("笔记").font(DSFont.serif(26, weight: .semibold)).foregroundStyle(DSColor.textPrimary)
+            Text(lang.pick("笔记", "Notes")).font(DSFont.serif(26, weight: .semibold)).foregroundStyle(DSColor.textPrimary)
                 .padding(.top, 10)
 
             HStack(spacing: 8) {
                 ForEach(Filter.allCases) { item in
-                    DSTag(item.label, selected: item == filter)
+                    DSTag(item.label(lang), selected: item == filter)
                         .onTapGesture { filter = item }
                 }
             }
@@ -67,14 +68,14 @@ struct NotesView: View {
             LazyVStack(spacing: 12) {
                 ForEach(shown) { mark in
                     NavigationLink(value: mark.chapterNumber) {
-                        MarkCard(mark: mark, title: repository.chapter(mark.chapterNumber)?.title ?? "")
+                        MarkCard(mark: mark, title: repository.chapter(mark.chapterNumber)?.title ?? "", lang: lang)
                     }
                     .buttonStyle(.plain)
                     .contextMenu {
                         Button(role: .destructive) {
                             modelContext.delete(mark)
                         } label: {
-                            Label("删除", systemImage: "trash")
+                            Label(lang.pick("删除", "Delete"), systemImage: "trash")
                         }
                     }
                 }
@@ -89,8 +90,9 @@ struct NotesView: View {
             Spacer()
             VStack(spacing: 10) {
                 Image(systemName: "highlighter").font(.system(size: 30)).foregroundStyle(DSColor.textFaint)
-                Text("还没有笔记").font(DSFont.sans(14)).foregroundStyle(DSColor.textTertiary)
-                Text("长按译文即可划线，存入此处").font(DSFont.sans(12)).foregroundStyle(DSColor.textFaint)
+                Text(lang.pick("还没有笔记", "No notes yet")).font(DSFont.sans(14)).foregroundStyle(DSColor.textTertiary)
+                Text(lang.pick("长按译文即可划线，存入此处", "Long-press a line to save a highlight here")).font(DSFont.sans(12))
+                    .foregroundStyle(DSColor.textFaint)
             }
             .frame(maxWidth: .infinity)
             Spacer()
@@ -104,16 +106,29 @@ struct NotesView: View {
 private struct MarkCard: View {
     let mark: Mark
     let title: String
+    let lang: ContentLanguage
+
+    private var kindLabel: String {
+        switch mark.kind {
+        case .highlight: lang.pick("划线", "Highlight")
+        case .note: lang.pick("笔记", "Note")
+        case .bookmark: lang.pick("书签", "Bookmark")
+        }
+    }
+
+    private var chapterLine: String {
+        lang.pick("第\(ChineseNumber.of(mark.chapterNumber))章 · \(title)", "Chapter \(mark.chapterNumber) · \(title)")
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 9) {
             HStack(spacing: 8) {
-                Text(mark.kind.label)
+                Text(kindLabel)
                     .font(DSFont.sans(10, weight: .medium))
                     .foregroundStyle(DSColor.accent)
                     .padding(.horizontal, 7).frame(height: 18)
                     .background(Capsule().fill(DSColor.accent.opacity(0.12)))
-                Text("第\(ChineseNumber.of(mark.chapterNumber))章 · \(title)")
+                Text(chapterLine)
                     .font(DSFont.sans(11.5)).foregroundStyle(DSColor.textTertiary)
                 Spacer()
             }

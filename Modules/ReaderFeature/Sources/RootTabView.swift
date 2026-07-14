@@ -8,12 +8,12 @@ enum ReaderTab: String, CaseIterable, Identifiable {
 
     var id: String { rawValue }
 
-    var label: String {
+    func label(_ lang: ContentLanguage) -> String {
         switch self {
-        case .today: "今日"
-        case .contents: "经文"
-        case .notes: "笔记"
-        case .profile: "我的"
+        case .today: lang.pick("今日", "Today")
+        case .contents: lang.pick("经文", "Text")
+        case .notes: lang.pick("笔记", "Notes")
+        case .profile: lang.pick("我的", "Me")
         }
     }
 
@@ -29,6 +29,7 @@ enum ReaderTab: String, CaseIterable, Identifiable {
 
 struct RootTabView: View {
     let repository: any ContentRepository
+    @Environment(\.appLanguage) private var lang
     @State private var tab: ReaderTab = .today
     @State private var path: [Int] = []
 
@@ -49,7 +50,7 @@ struct RootTabView: View {
 
                 tabBar
             }
-            .toolbar(.hidden, for: .navigationBar)
+            .dsHideNavigationChrome()
             .navigationDestination(for: Int.self) { number in
                 ReaderView(repository: repository, startNumber: number)
             }
@@ -64,7 +65,7 @@ struct RootTabView: View {
                 VStack(spacing: 4) {
                     Image(systemName: item.symbol)
                         .font(.system(size: 20, weight: .regular))
-                    Text(item.label)
+                    Text(item.label(lang))
                         .font(DSFont.sans(9.5, weight: .regular))
                         .tracking(1)
                 }
@@ -74,7 +75,7 @@ struct RootTabView: View {
                 .onTapGesture {
                     withAnimation(.easeOut(duration: 0.2)) { tab = item }
                 }
-                .accessibilityLabel(item.label)
+                .accessibilityLabel(item.label(lang))
             }
         }
         .padding(.top, 10)

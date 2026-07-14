@@ -1,10 +1,9 @@
-# Code-signing via fastlane match. Certificates & profiles live in a PRIVATE
-# git repo (placeholder URL below — set MATCH_GIT_URL). CI runs read-only.
-git_url(ENV["MATCH_GIT_URL"] || "https://github.com/your-org/certificates.git")
+# Signing assets synced via `match`. Drive with env for the new org account:
+#   MATCH_GIT_URL     – private repo holding the encrypted certs/profiles
+#   APP_IDENTIFIER    – com.rockhammerlabs.daodejing
+#   MATCH_PASSWORD    – decryption passphrase (CI secret)
+git_url(ENV["MATCH_GIT_URL"] || "https://github.com/rockhammerlabs/certificates.git")
 storage_mode("git")
-
 type("appstore")
-app_identifier([ENV["APP_IDENTIFIER"] || "com.example.daodejing"])
-
-# Never let CI create/regenerate certificates — it only consumes them.
+app_identifier([ENV["APP_IDENTIFIER"] || "com.rockhammerlabs.daodejing"])
 readonly(ENV["CI"] == "true")

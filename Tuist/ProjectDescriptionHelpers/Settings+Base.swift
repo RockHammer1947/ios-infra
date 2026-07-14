@@ -50,7 +50,12 @@ public extension Settings {
         return .settings(
             base: settings,
             configurations: [
-                .debug(name: "Debug"),
+                // Make DEBUG explicit so `#if DEBUG` compiles in dev-only code
+                // (e.g. the on-device TTS benchmark) regardless of Tuist defaults.
+                .debug(name: "Debug", settings: [
+                    "SWIFT_ACTIVE_COMPILATION_CONDITIONS": "$(inherited) DEBUG",
+                    "GCC_PREPROCESSOR_DEFINITIONS": "$(inherited) DEBUG=1",
+                ]),
                 .release(name: "Release"),
             ]
         )

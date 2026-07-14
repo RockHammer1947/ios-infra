@@ -1,1 +1,1 @@
-Initial infrastructure release.
+First release: all 81 chapters with text, plain meaning, and reflection; on-device neural narration; notes and a daily reminder.

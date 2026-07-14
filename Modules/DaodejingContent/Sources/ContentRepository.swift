@@ -1,5 +1,24 @@
 import Foundation
 
+/// Which language edition of the text to load.
+public enum ContentLanguage: String, Sendable, CaseIterable, Identifiable {
+    case zh
+    case en
+
+    public var id: String { rawValue }
+
+    /// The bundled JSON resource for this edition.
+    var resourceName: String { self == .zh ? "chapters" : "chapters-en" }
+
+    /// Native name for a language picker.
+    public var displayName: String { self == .zh ? "中文" : "English" }
+
+    /// Best guess from the device, used as the initial setting.
+    public static var deviceDefault: ContentLanguage {
+        (Locale.current.language.languageCode?.identifier == "zh") ? .zh : .en
+    }
+}
+
 /// Read-only access to the 道德经 chapters.
 public protocol ContentRepository: Sendable {
     func allChapters() -> [Chapter]
@@ -26,12 +45,14 @@ public extension ContentRepository {
     }
 }
 
-/// Loads chapters from the bundled `chapters.json`.
+/// Loads chapters from the bundled `chapters.json` (中文) or `chapters-en.json`.
 public struct BundledContentRepository: ContentRepository {
     private let chapters: [Chapter]
+    public let language: ContentLanguage
 
-    public init() {
-        chapters = Self.load()
+    public init(language: ContentLanguage = .zh) {
+        self.language = language
+        chapters = Self.load(language)
     }
 
     public func allChapters() -> [Chapter] { chapters }
@@ -42,13 +63,13 @@ public struct BundledContentRepository: ContentRepository {
 
     private struct ChaptersFile: Codable { let chapters: [Chapter] }
 
-    private static func load() -> [Chapter] {
+    private static func load(_ language: ContentLanguage) -> [Chapter] {
         guard
-            let url = Bundle.module.url(forResource: "chapters", withExtension: "json"),
+            let url = Bundle.module.url(forResource: language.resourceName, withExtension: "json"),
             let data = try? Data(contentsOf: url),
             let file = try? JSONDecoder().decode(ChaptersFile.self, from: data)
         else {
-            assertionFailure("chapters.json missing or invalid")
+            assertionFailure("\(language.resourceName).json missing or invalid")
             return []
         }
         return file.chapters.sorted { $0.number < $1.number }
