@@ -21,12 +21,42 @@ a few lines of config.
 ## Quick start (macOS, Xcode 16+)
 
 ```bash
-scripts/bootstrap.sh        # installs tools, gems, generates iOSInfra.xcworkspace
+git clone https://github.com/RockHammer1947/ios-infra.git
+cd ios-infra
+scripts/bootstrap.sh        # tools + gems + TTS models + sherpa-onnx + workspace
 open iOSInfra.xcworkspace
 ```
 
 Generated `*.xcodeproj`/`*.xcworkspace` are **not committed** — always regenerate
 with `tuist generate`.
+
+### Large binaries (not in Git)
+
+TTS models and the sherpa-onnx frameworks are **git-ignored** (too large for
+GitHub). `scripts/bootstrap.sh` downloads and stages them automatically. On a
+fresh machine you can also run them alone:
+
+```bash
+./scripts/fetch-tts-models.sh     # MeloTTS zh + en → apps/DaodejingReader/BundledTTS/
+./scripts/fetch-sherpa-onnx.sh    # onnxruntime + espeak-free sherpa build → Modules/Audio/Vendor/
+```
+
+| Script | What | Approx size / time |
+|---|---|---|
+| `fetch-tts-models.sh` | MeloTTS voice models (zh + en) | ~150–200 MB download |
+| `fetch-sherpa-onnx.sh` | onnxruntime xcframework + **from-source** espeak-free sherpa-onnx | ~42 MB download, then ~20 min compile (`cmake` required: `brew install cmake`) |
+
+Both scripts are idempotent (stamp files skip re-download). Behind a restricted
+network, point them at a GitHub mirror:
+
+```bash
+export SHERPA_ONNX_MIRROR=https://ghproxy.com/https://github.com
+./scripts/fetch-tts-models.sh
+./scripts/fetch-sherpa-onnx.sh
+```
+
+Without these steps, `tuist generate` fails (missing xcframework paths) and the
+app builds without voice assets.
 
 ### Run / debug locally
 
